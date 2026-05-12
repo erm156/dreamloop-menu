@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Continue?</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="ps1">
+      <video class="bg-blur" autoplay loop muted playsinline>
+        <source src="background.mp4" type="video/mp4" />
+      </video>
+
+      <video class="bg" autoplay loop muted playsinline>
+        <source src="background.mp4" type="video/mp4" />
+      </video>
+
+      <button class="audio-toggle" id="audio-toggle" aria-label="Toggle audio">
+        ♫
+      </button>
+
+      <audio id="bgm" preload="auto" loop>
+        <source src="music.wav" type="audio/wav" />
+      </audio>
+
+      <!-- visual overlays -->
+      <div class="dream-haze"></div>
+      <div class="video-warp"></div>
+      <div class="light-bloom"></div>
+      <div class="coolwash"></div>
+      <div class="vapor-gradient"></div>
+      <div class="scanlines"></div>
+      <div class="noise"></div>
+      <div class="vignette"></div>
+      <div class="grid"></div>
+
+      <!-- UI -->
+      <div class="hud">
+        <div class="panel">
+          <div class="title-group">
+            <div class="title">YOU ARE TIRED.</div>
+            <div class="title">CONTINUE?</div>
+          </div>
+
+          <div class="menu" role="menu" aria-label="Continue menu">
+            <div class="item selected" data-action="yes">
+              <span class="cursor">▶</span>
+              <span class="label">YES</span>
+            </div>
+
+            <div class="item" data-action="no">
+              <span class="cursor">▶</span>
+              <span class="label">NO</span>
+            </div>
+          </div>
+
+          <div class="hint">↑/↓ SELECT&nbsp;&nbsp;ENTER CONFIRM</div>
+        </div>
+      </div>
+      <div class="yes-bloom" id="yes-bloom"></div>
+      <div class="blackout" id="blackout"></div>
+    </div>
+
+    <script>
+      const items = Array.from(document.querySelectorAll(".item"));
+      const bgm = document.getElementById("bgm");
+      const audioToggle = document.getElementById("audio-toggle");
+      const blackout = document.getElementById("blackout");
+      const yesBloom = document.getElementById("yes-bloom");
+      const panel = document.querySelector(".panel");
+
+      let idx = 0;
+      let audioPlaying = false;
+
+      function triggerYesAnimation() {
+        yesBloom.classList.remove("active");
+        void yesBloom.offsetWidth;
+        yesBloom.classList.add("active");
+        panel.classList.add("yes-selected");
+      }
+
+      function triggerNoAnimation() {
+        const cols = 24;
+        const rows = 14;
+
+        blackout.innerHTML = "";
+        blackout.classList.remove("complete");
+
+        blackout.style.setProperty("--cols", cols);
+        blackout.style.setProperty("--rows", rows);
+
+        const total = cols * rows;
+
+        for (let i = 0; i < total; i++) {
+          const tile = document.createElement("div");
+          tile.className = "blackout-tile";
+
+          const delay = Math.random() * 3500;
+          tile.style.setProperty("--delay", `${delay}ms`);
+
+          blackout.appendChild(tile);
+        }
+
+        setTimeout(() => {
+          blackout.classList.add("complete");
+        }, 4000);
+      }
+
+      async function toggleAudio() {
+        if (!bgm || !audioToggle) return;
+
+        if (!audioPlaying) {
+          bgm.volume = 0.45;
+          await bgm.play();
+          audioPlaying = true;
+          audioToggle.classList.add("playing");
+          audioToggle.textContent = "♪";
+        } else {
+          bgm.pause();
+          audioPlaying = false;
+          audioToggle.classList.remove("playing");
+          audioToggle.textContent = "♫";
+        }
+      }
+
+      function render() {
+        items.forEach((el, i) => {
+          el.classList.toggle("selected", i === idx);
+        });
+      }
+
+      function confirmSelection() {
+        const action = items[idx].dataset.action;
+        console.log("CONFIRM:", action);
+
+        items[idx].animate(
+          [
+            { transform: "scale(1)" },
+            { transform: "scale(0.98)" },
+            { transform: "scale(1)" },
+          ],
+          { duration: 120, iterations: 1 }
+        );
+
+        if (action == "yes") {
+          triggerYesAnimation();
+        }
+
+        if (action == "no") {
+          triggerNoAnimation();
+        }
+      }
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowDown") {
+          idx = (idx + 1) % items.length;
+          render();
+        }
+
+        if (e.key === "ArrowUp") {
+          idx = (idx - 1 + items.length) % items.length;
+          render();
+        }
+
+        if (e.key === "Enter") {
+          confirmSelection();
+        }
+      });
+
+      items.forEach((el, i) => {
+        el.addEventListener("click", () => {
+          idx = i;
+          render();
+          confirmSelection();
+        });
+      });
+
+      audioToggle.addEventListener("click", () => {
+        toggleAudio().catch(console.error);
+      });
+
+      render();
+    </script>
+  </body>
+</html>
