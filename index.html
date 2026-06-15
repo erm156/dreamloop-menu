@@ -97,7 +97,7 @@
           const tile = document.createElement("div");
           tile.className = "blackout-tile";
 
-          const delay = Math.random() * 3500;
+          const delay = Math.random() * 2000;
           tile.style.setProperty("--delay", `${delay}ms`);
 
           blackout.appendChild(tile);
@@ -105,7 +105,7 @@
 
         setTimeout(() => {
           blackout.classList.add("complete");
-        }, 4000);
+        }, 2500);
       }
 
       async function toggleAudio() {
