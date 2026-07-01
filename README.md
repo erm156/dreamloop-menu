@@ -8,12 +8,8 @@ A small, interactive vignette made with HTML/CSS and JavaScript.
 
 ### YES
 
-<video width="640" height="360" autoplay loop muted>
-  <source src="./media/yes-animation.mp4" type="video/mp4">
-</video>
+https://github.com/user-attachments/assets/3ffbcb63-0012-461b-86b8-1c95ba261263
 
 ### NO
 
-<video width="640" height="360" autoplay loop muted>
-  <source src="./media/no-animation.mp4" type="video/mp4">
-</video>
+https://github.com/user-attachments/assets/1668600d-67de-49e3-878f-50145d26484a
